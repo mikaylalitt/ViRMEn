@@ -1,0 +1,49 @@
+function code = singleSquareArenaBig
+% singleSquareArenaBig   Code for the ViRMEn experiment singleSquareArenaBig.
+%   code = singleSquareArenaBig   Returns handles to the functions that ViRMEn
+%   executes during engine initialization, runtime and termination.
+
+
+% Begin header code - DO NOT EDIT
+code.initialization = @initializationCodeFun;
+code.runtime = @runtimeCodeFun;
+code.termination = @terminationCodeFun;
+% End header code - DO NOT EDIT
+
+
+
+% --- INITIALIZATION code: executes before the ViRMEn engine starts.
+function vr = initializationCodeFun(vr)
+
+% ML added for testing:
+vr.numRewards = 0;
+vr.previousY_Posn = 3;
+vr.previousX_Posn = 0;
+
+
+% --- RUNTIME code: executes on every iteration of the ViRMEn engine.
+function vr = runtimeCodeFun(vr)
+
+% ML added for testing:
+if ((vr.position(1) < -21.17) && (vr.position(2) > 23))
+%     reward(vr,vr.timeSolenoid);
+    if (vr.previousY_Posn < 23 || vr.previousX_Posn > -21.17)
+        disp('REWARD LEFT');
+        vr.numRewards = vr.numRewards+1;
+    end
+    
+ 
+%     vr.counterReward=0;
+end
+
+if ((vr.position(1) > 21.17) && (vr.position(2) > 23))
+%     reward(vr,vr.timeSolenoid);
+    disp('REWARD RIGHT');
+%     vr.counterReward=0;
+end
+
+% --- TERMINATION code: executes after the ViRMEn engine stops.
+function vr = terminationCodeFun(vr)
+
+%ML added for testing:
+disp(vr.numRewards);

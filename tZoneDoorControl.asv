@@ -1,0 +1,35 @@
+function vr = tZoneDoorControl(vr,oldWorld,door)
+%TZONEDOORCONTROL Summary of this function goes here
+
+% modified from "targetControl.m"
+
+if strcmp(door,'leftDoor')
+    vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.leftDoor;  
+elseif strcmp(door,'rightDoor')
+    vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.leftDoor;    
+elseif strcmp(door,'middleDoor')
+    vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.middleDoor; 
+else
+    error('tZoneDoorControl not called on door');
+end
+
+% get the current position of the door:
+vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex,:); 
+vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2));
+
+xyz = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2));
+c = [mean(xyz(1,:)),mean(xyz(2,:))];
+
+% if the player is close enough to the target centroid
+if (sqrt((c(1)-vr.position(1))^2 + (c(2)-vr.position(2))^2) < 1)
+    disp('close to door!');
+    % move the door outside 
+    vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) + 15; %15 is an arbitrary amount
+    vr.hasleftDoor = false;
+    disp('now does not have door');
+end
+
+
+
+
+

@@ -1,0 +1,169 @@
+function vr = switchDoor(vr, oldWorld, side)
+%SWITCHDOOR Summary of this function goes here
+%   Detailed explanation goes here
+vr.inLeftHall = false;
+vr.inRightHall = false;
+
+% first move the door in the maze out:
+if strcmp(side, 'leftHall')
+    vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingLeftDoor;
+    vr.doorNum = 25;
+    vr.doorIndex2 = vr.worlds{vr.currentWorld}.objects.indices.movingRightDoor;
+    vr.doorNum2 = 26;
+    vr.inLeftHall = true;
+elseif strcmp(side, 'rightHall')
+    vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingRightDoor;
+    vr.doorNum = 26; 
+    vr.doorIndex2 = vr.worlds{vr.currentWorld}.objects.indices.movingLeftDoor;
+    vr.doorNum2 = 25;
+    vr.inRightHall = true;
+end
+
+% disp('in left hall?');
+% if vr.inLeftHall
+%     disp('Yes');
+% else
+%     disp('No');
+% end
+% disp('in right hall?');
+% if vr.inRightHall
+%     disp('Yes');
+% else
+%     disp('No');
+% end
+% 
+% disp('door num: ');
+% disp(vr.doorNum);
+
+% determine the indices of the first and last vertex of door:
+vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex,:); 
+vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2));
+vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) - 10; 
+vr.doorSide = 'right'; % update which side the door has been moved to
+
+% change the door's edgeRadius:
+vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum) = 0.5;
+
+% vr.worlds{vr.currentWorld}.edges.radius(vr.door_edge_indices{i_d}(1):vr.door_edge_indices{i_d}(2)) = 2;
+% vr.worlds{vr.currentWorld}.edges.endpoints(vr.door_edge_indices{i_d}(1):vr.door_edge_indices{i_d}(2),[2 4]) = vr.exper.worlds{vr.currentWorld}.variables.doorY(vr.exper.worlds{vr.currentWorld}.variables.D_ind(i_d),i_d);
+
+% determine the indices of the first and last vertex of door:
+vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex2,:); 
+vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2));
+vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) + 10; 
+
+% change the door's edgeRadius:
+vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum2) = NaN;
+
+% update world edges:
+vr.worlds{vr.currentWorld} = update_borders(vr.worlds{vr.currentWorld});
+
+% disp('EDGES RADIUS');
+% disp(vr.worlds{vr.currentWorld}.edges.radius);
+
+% if vr.inLeftHall
+%     vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingRightDoor;
+%     vr.doorNum = 26; 
+% elseif vr.inRightHall
+%     vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingLeftDoor;
+%     vr.doorNum = 25;
+% end
+% vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex,:); 
+% vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2));
+% vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) + 10; 
+% 
+% hasBorder = ~isnan(vr.worlds{vr.currentWorld}.edges.radius); % true if the edgeRadius is something other than NaN
+% vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum) = NaN;
+% vr.worlds{vr.currentWorld}.walls.endpoints = vr.worlds{vr.currentWorld}.edges.endpoints(hasBorder, :); % array consisting of the four endpoints associated with every wall that has a non-NaN edge
+% vr.worlds{vr.currentWorld}.walls.radius    = vr.worlds{vr.currentWorld}.edges.radius(hasBorder); % values of edgeRadius (wallThickness which is 0.5) for every wall
+% vr.worlds{vr.currentWorld}.walls.radius2   = vr.worlds{vr.currentWorld}.edges.radius.^2; % squares the value of the edgeRadius (0.25 for edgeRadius of 0.5)
+% vr.worlds{vr.currentWorld}.walls.angle     = atan2  ( (vr.worlds{vr.currentWorld}.walls.endpoints(:,4) - vr.worlds{vr.currentWorld}.walls.endpoints(:,2))   ...
+%     , (vr.worlds{vr.currentWorld}.walls.endpoints(:,3) - vr.worlds{vr.currentWorld}.walls.endpoints(:,1))); % angle of every wall?
+% vr.worlds{vr.currentWorld}.walls.vector    = [ vr.worlds{vr.currentWorld}.walls.radius .* cos(vr.worlds{vr.currentWorld}.walls.angle + pi/2)               ...
+%     , vr.worlds{vr.currentWorld}.walls.radius .* sin(vr.worlds{vr.currentWorld}.walls.angle + pi/2)  ];
+% vector = repmat(vr.worlds{vr.currentWorld}.walls.vector, 1, 2);
+% vr.worlds{vr.currentWorld}.walls.border1   = vr.worlds{vr.currentWorld}.walls.endpoints + vector;
+% vr.worlds{vr.currentWorld}.walls.border2   = vr.worlds{vr.currentWorld}.walls.endpoints - vector;
+
+
+% % 
+% % change the door's edgeRadius:
+% % disp('OBJECTS:');
+% % disp(vr.worlds{vr.currentWorld}.objects.indices);
+% hasBorder = ~isnan(vr.worlds{vr.currentWorld}.edges.radius); % true if the edgeRadius is something other than NaN
+% disp('Has border?:');
+% disp(hasBorder);
+% vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum) = 0.5;
+% disp('BREAK');
+% disp(vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum));
+% % disp('Has border after?:');
+% % disp(hasBorder);
+% vr.worlds{vr.currentWorld}.walls.endpoints = vr.worlds{vr.currentWorld}.edges.endpoints(hasBorder, :); % array consisting of the four endpoints associated with every wall that has a non-NaN edge
+% vr.worlds{vr.currentWorld}.walls.radius    = vr.worlds{vr.currentWorld}.edges.radius(hasBorder); % values of edgeRadius (wallThickness which is 0.5) for every wall
+% vr.worlds{vr.currentWorld}.walls.radius2   = vr.worlds{vr.currentWorld}.edges.radius.^2; % squares the value of the edgeRadius (0.25 for edgeRadius of 0.5)
+% vr.worlds{vr.currentWorld}.walls.angle     = atan2  ( (vr.worlds{vr.currentWorld}.walls.endpoints(:,4) - vr.worlds{vr.currentWorld}.walls.endpoints(:,2))   ...
+%     , (vr.worlds{vr.currentWorld}.walls.endpoints(:,3) - vr.worlds{vr.currentWorld}.walls.endpoints(:,1))); % angle of every wall?
+% vr.worlds{vr.currentWorld}.walls.vector    = [ vr.worlds{vr.currentWorld}.walls.radius .* cos(vr.worlds{vr.currentWorld}.walls.angle + pi/2)               ...
+%     , vr.worlds{vr.currentWorld}.walls.radius .* sin(vr.worlds{vr.currentWorld}.walls.angle + pi/2)  ];
+% vector = repmat(vr.worlds{vr.currentWorld}.walls.vector, 1, 2);
+% vr.worlds{vr.currentWorld}.walls.border1   = vr.worlds{vr.currentWorld}.walls.endpoints + vector;
+% vr.worlds{vr.currentWorld}.walls.border2   = vr.worlds{vr.currentWorld}.walls.endpoints - vector;
+% 
+% % determine the indices of the first and last vertex of door:
+% vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex,:); 
+% vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2)); 
+% 
+% if vr.inLeftHall
+%     % move the door:
+% 	vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) - 10; 
+%     vr.doorSide = 'right'; % update which side the door has been moved to
+% elseif vr.inRightHall
+%     % move the door:
+% 	vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) - 10; 
+%     vr.doorSide = 'left'; 
+% end
+% 
+% % now move the other door back into the maze:
+% if vr.inLeftHall
+%     vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingRightDoor;
+%     vr.doorNum = 26; 
+% elseif vr.inRightHall
+%     vr.doorIndex = vr.worlds{vr.currentWorld}.objects.indices.movingLeftDoor;
+%     vr.doorNum = 25;
+% end
+% 
+% % change the door's edgeRadius:
+% hasBorder = ~isnan(vr.worlds{vr.currentWorld}.edges.radius); % true if the edgeRadius is something other than NaN
+% vr.worlds{vr.currentWorld}.edges.radius(vr.doorNum) = NaN;
+% vr.worlds{vr.currentWorld}.walls.endpoints = vr.worlds{vr.currentWorld}.edges.endpoints(hasBorder, :); % array consisting of the four endpoints associated with every wall that has a non-NaN edge
+% vr.worlds{vr.currentWorld}.walls.radius    = vr.worlds{vr.currentWorld}.edges.radius(hasBorder); % values of edgeRadius (wallThickness which is 0.5) for every wall
+% vr.worlds{vr.currentWorld}.walls.radius2   = vr.worlds{vr.currentWorld}.edges.radius.^2; % squares the value of the edgeRadius (0.25 for edgeRadius of 0.5)
+% vr.worlds{vr.currentWorld}.walls.angle     = atan2  ( (vr.worlds{vr.currentWorld}.walls.endpoints(:,4) - vr.worlds{vr.currentWorld}.walls.endpoints(:,2))   ...
+%     , (vr.worlds{vr.currentWorld}.walls.endpoints(:,3) - vr.worlds{vr.currentWorld}.walls.endpoints(:,1))); % angle of every wall?
+% vr.worlds{vr.currentWorld}.walls.vector    = [ vr.worlds{vr.currentWorld}.walls.radius .* cos(vr.worlds{vr.currentWorld}.walls.angle + pi/2)               ...
+%     , vr.worlds{vr.currentWorld}.walls.radius .* sin(vr.worlds{vr.currentWorld}.walls.angle + pi/2)  ];
+% vector = repmat(vr.worlds{vr.currentWorld}.walls.vector, 1, 2);
+% vr.worlds{vr.currentWorld}.walls.border1   = vr.worlds{vr.currentWorld}.walls.endpoints + vector;
+% vr.worlds{vr.currentWorld}.walls.border2   = vr.worlds{vr.currentWorld}.walls.endpoints - vector;
+% 
+% % determine the indices of the first and last vertex of door:
+% vr.doorVertices = vr.worlds{vr.currentWorld}.objects.vertices(vr.doorIndex,:); 
+% vr.doorOrigin = vr.worlds{oldWorld}.surface.vertices(:,vr.doorVertices(1):vr.doorVertices(2)); 
+% 
+% if vr.inLeftHall
+%     % move the door:
+% 	vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) + 10; 
+%     vr.doorSide = 'right'; % update which side the door has been moved to
+% elseif vr.inRightHall
+%     % move the door:
+% 	vr.worlds{oldWorld}.surface.vertices(2,vr.doorVertices(1):vr.doorVertices(2)) = vr.doorOrigin(2,:) + 10; 
+%     vr.doorSide = 'left'; 
+% end
+% 
+% % for testing:
+% vr.doorIndexArray = vr.doorVertices(1):vr.doorVertices(2); % page 32 of help manual
+% vr.worlds{vr.currentWorld}.surface.colors(3,vr.doorIndexArray) = 0;
+
+% disp('Has border after?:');
+% disp(hasBorder);
+
