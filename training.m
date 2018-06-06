@@ -1,6 +1,6 @@
 function code = training
 % this is modified from singleSquareArena
-% Code for the ViRMEn experiment training.
+% Code for the ViRMEn experiment "training".
 %   Returns handles to the functions that ViRMEn
 %   executes during engine initialization, runtime and termination.
 
