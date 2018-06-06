@@ -21,23 +21,24 @@ vr.experimentV1 = false;
 vr.experimentV2 = false;
 vr.experimentV3 = true;
 
-vr.starting = true;
-
 vr = initializeDAQ_arenaTZone(vr);
 
 % set number of rewards
 vr.numRewards = 0;
 
+% set the amount of water (uL) that each reward gives
+vr.waterPerReward = 4; 
+
 % set properties of the reward
 vr.timeSolenoid = 16; % in milliseconds
 vr.rewardsOn = 1;
 
-% set starting positions ML
+% set starting positions
 vr.prevY_Posn = 8; % y-coordinate of initial conditions of world
 vr.prevX_Posn = 0; % x-coordinate of initial conditions of world
-vr.currHall = 'main'; % which hall the mouse is in 
-vr.prevHall = ''; % the hall the mouse was in previously
-vr.hasReset = false; % if the mouse has used the return halls and gone back through the middle hall 
+vr.currHall = 'main'; % which hall the mouse is in to start with
+vr.prevHall = ''; % the hall the mouse was in previously, which is none to start
+vr.hasReset = false; % if the mouse has used the return halls and gone back through the main (middle) hall 
 
 % specifically for version 2:
 if vr.experimentV2
@@ -50,21 +51,23 @@ if vr.experimentV3
     vr.prevRewardSide = 'none';
 end
 
-% % for doors at the beginning blocking the return paths:
+% % initially there are doors at the beginning blocking the return paths
+% % this prevents the animal from going the wrong way if it gets turned around
+% % at the beginning
 vr.hasrightInitialDoor = true;
 vr.hasleftInitialDoor = true;
-% vr.hastestDoor = true;
 
 % set ball movement
-% vr.scaling = [7 5.6]; % forward gain, angular gain for ball movement
-% vr.scaling = [19.7, 4];
-% vr.scaling = [26.5, 4];
-vr.scaling = [33.5, 7.5];
+vr.scaling = [33.5, 7.5]; % forward gain, angular gain for ball movement
 
+% initialize starting variables
+vr.starting = true;
 vr.startTime = now;
 vr.gaveFirstReward = false;
 vr.initialDropsToSend = 1;
 vr.dropsToSend = 1;
+
+
 
 % --- RUNTIME code: executes on every iteration of the ViRMEn engine.
 function vr = runtimeCodeFun(vr)
@@ -76,7 +79,7 @@ function vr = runtimeCodeFun(vr)
 
 % keep track of if the mouse is eligible for a reward
 % i.e. if the mouse has returned to start through return hall and gone back
-% through the main hall (i.e. has gone back through the starting posn)
+% through the main hall (it has gone back through the starting position)
 if (strcmp(vr.currHall,'main')... 
         && (vr.position(2) > 12.5 && vr.position(2) < 15)... > 2 && vr.position(2) < 4)...
         && (strcmp(vr.prevHall,'') || strcmp(vr.prevHall,'leftReturn') || strcmp(vr.prevHall,'rightReturn')))
@@ -84,7 +87,7 @@ if (strcmp(vr.currHall,'main')...
 end
 
 % keep track of which hall the mouse is currently in and was in previously
-if (vr.position(1) > -1 && vr.position(1) < 1)% checking to see if the mouse is in the main hall (just via the width)
+if (vr.position(1) > -1 && vr.position(1) < 1)% checking to see if the mouse is in the main hall (via the width of the main hall)
     if (vr.prevX_Posn < -1 || vr.prevX_Posn > 1)
         vr.prevHall = vr.currHall;
     end
@@ -115,8 +118,8 @@ elseif (vr.position(1) > 1)
     end
 end
 
-% remove the initial doors blocking the return pathways once the mouse gets past a certain y-value:
-if (vr.position(1) > 20) || (vr.position(1) < -20) % 20 is an arbitrary amount, can be changed!
+% remove the initial doors blocking the return pathways once the mouse gets past a certain x-value:
+if (vr.position(1) > 20) || (vr.position(1) < -20) % 20 is an arbitrary amount, can be changed
     if vr.hasleftInitialDoor
         vr = tZoneRemoveDoor(vr, vr.currentWorld, 'left');
     end 
@@ -138,13 +141,66 @@ end
 %     vr.hastestDoor = true;
 % end
 
-% deliver reward for endzone task
+% % deliver reward for endzone task
+% if vr.rewardsOn && vr.hasReset
+%     vr = reward(vr);
+% end
+
 if vr.rewardsOn && vr.hasReset
-    vr = reward(vr);
+    % check if the animal is in the left reward zone:
+    if ((vr.position(1) < -23) && (vr.position(2) > 23)) 
+        % make sure that it went through the main hall and top left hall to get there:
+        if (vr.prevX_Posn > -23 && strcmp(vr.prevHall,'main'))
+            % check if the animal alternated sides:
+            if vr.experimentV3 && sctrmp(vr.prevRewardSide, 'left')
+                disp('Did not alternate sides so no reward given');
+            else  
+                % deliver reward
+                vr = reward(vr);
+                disp('REWARD LEFT');
+                % the mouse has to reset before getting another reward:
+                vr.hasReset = false;
+                % keep track of which side the reward was last delivered on:
+                if vr.experimentV3
+                    vr.prevRewardSide = 'left';
+                end
+                % switch which side the door is on
+                if vr.experimentV2
+                    vr = switchDoor(vr, vr.currentWorld, 'leftHall');
+                end
+            end
+        end
+    end
+    
+    % check if the animal is in the right reward zone:
+    if ((vr.position(1) > 23) && (vr.position(2) > 23)) 
+        if (vr.prevX_Posn < 23 && strcmp(vr.prevHall,'main'))
+            if vr.experimentV3 && strcmp(vr.prevRewardSide, 'right')
+                disp('Did not alternate sides so no reward given');
+            else
+                % deliver reward
+                vr = reward(vr);
+                disp('REWARD RIGHT');
+                % the mouse has to reset before getting another reward:
+                vr.hasReset = false;
+                % keep track of which side the reward was last delivered on:
+                if vr.experimentV3
+                    vr.prevRewardSide = 'right';
+                end
+                % switch which side the door is on
+                if vr.experimentV2
+                    vr = switchDoor(vr, vr.currentWorld, 'rightHall');
+                end
+            end
+        end
+    end
+    
 end
 
+% update previous positions:
 vr.prevY_Posn = vr.position(2);
 vr.prevX_Posn = vr.position(1);
+
 
 
 % --- TERMINATION code: executes after the ViRMEn engine stops.
@@ -152,13 +208,13 @@ function vr = terminationCodeFun(vr)
 
 try stop(vr.moveRecordingSession);           catch ME; end
 try stop(vr.moveSession);                    catch ME; end
-% try stop(vr.moveRecordingSession);           catch ME; end
+try stop(vr.moveRecordingSession);           catch ME; end
 try stop(vr.waterSession);                   catch ME; end
 try stop(vr.ballMovement);                   catch ME; end
 
 % report how much water was delivered and how many rewards were earned
 disp(strcat(num2str(vr.numRewards), ' rewards given NOT including the initial one'));
-disp(['That is ', num2str(vr.numRewards*4), ' uL of water']); % not sure if this number is correct?
+disp(['That is ', num2str(vr.numRewards*vr.waterPerReward), ' uL of water']); % not sure if this number is correct?
 fclose('all'); % close save files
 
 
