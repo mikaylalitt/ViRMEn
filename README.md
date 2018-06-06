@@ -22,9 +22,9 @@ There is code for two mazes in this repository.
 
 The first maze is a straight linear track and is meant to train animals to run in virtual reality. For the code written, animals must alternate between each end of the track (called "endzones" in the code) in order to receive a reward. To run this maze, open the experiment:
 
-'''
+```
 arena200cmEnriched_track_endZoneTask_v2
-'''
+```
 
 Set the experiment so that it has the following settings:
 
