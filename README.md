@@ -28,20 +28,16 @@ arena200cmEnriched_track_endZoneTask_v2
 
 Set the experiment so that it has the following settings:
 
-"Movement function:"
-'''
-moveBall_1D_smooth.m
-'''
+```
+Movement function:
+  moveBall_1D_smooth.m
 
-"Transform function:"
-'''
-transformCylindrical
-'''
+Transform function:
+  transformCylindrical
 
-"Experiment code:"
-'''
-training
-'''
+Experiment code:
+  training
+```
 
 ## Authors
 
