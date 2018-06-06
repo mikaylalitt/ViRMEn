@@ -1,8 +1,9 @@
 function code = training
-% this is modified from singleSquareArena to include the t-shape rewards
-% singleSquareArena   Code for the ViRMEn experiment singleSquareArena.
-%   code = singleSquareArena   Returns handles to the functions that ViRMEn
+% this is modified from singleSquareArena
+% Code for the ViRMEn experiment training.
+%   Returns handles to the functions that ViRMEn
 %   executes during engine initialization, runtime and termination.
+
 
 
 % Begin header code - DO NOT EDIT
@@ -21,48 +22,37 @@ vr = initializeDAQ_Training(vr);
 % set number of rewards
 vr.numRewards = 0;
 
+% set the amount of water (uL) that each reward gives
+vr.waterPerReward = 4; 
+
 % set properties of the reward
 vr.timeSolenoid = 16; % in milliseconds
-vr.rewardsOn = 1;
+vr.rewardsOn = true;
 
 % keep track of where the last reward was given:
+% the forward endzone (from perspective of start) is endzone "2"
+% the back endzone (from perspective of start) is endzone "1"
 vr.lastEndZoneRewarded = 0; % start with neither end zone being the last one rewarded
 
 % set ball movement
-% vr.scaling = [7 5.6]; % forward gain, angular gain for ball movement
-% vr.scaling = [19.7, 4];
-% vr.scaling = [26.5, 4];
-% vr.scaling = [33.5, 4];
-vr.scaling = [19.7,2.2]; % 2 meter track
+vr.scaling = [19.7,2.2]; % forward gain, angular gain for ball movement
 
+% initialize starting variables
 vr.startTime = now;
 vr.gaveFirstReward = false;
 vr.initialDropsToSend = 1;
 vr.dropsToSend = 1;
 
+
+
 % --- RUNTIME code: executes on every iteration of the ViRMEn engine.
 function vr = runtimeCodeFun(vr)
 
 % deliver reward for endzone task
-% if vr.rewardsOn
-%     vr = alternateEndZoneReward(vr, vr.lastEndZoneRewarded);
-% end
-
-if (vr.position(2) > str2double(vr.exper.variables.arenaLength)-str2double(vr.exper.variables.endZoneLength)) ...
-        && (vr.lastEndZoneRewarded == 1 || ~vr.gaveFirstReward)
-    if ~vr.gaveFirstReward
-       vr.lastEndZoneRewarded = 1; 
-%        vr.gaveFirstReward = true;
-    end
-    vr = alternateEndZoneReward(vr);
-elseif (vr.position(2) < str2double(vr.exper.variables.endZoneLength)) ...
-        && (vr.lastEndZoneRewarded == 2 || ~vr.gaveFirstReward)
-    if ~vr.gaveFirstReward
-       vr.lastEndZoneRewarded = 2; 
-%        vr.gaveFirstReward = true;
-    end
+if vr.rewardsOn
     vr = alternateEndZoneReward(vr);
 end
+
 
 
 % --- TERMINATION code: executes after the ViRMEn engine stops.
@@ -77,6 +67,6 @@ try stop(vr.ballMovement);                   catch ME; end
 
 % report how much water was delivered and how many rewards were earned
 disp(strcat(num2str(vr.numRewards), ' rewards given NOT including the initial one'));
-disp(['That is ', num2str(vr.numRewards*4), ' uL of water']); % not sure if this number is correct?
+disp(['That is ', num2str(vr.numRewards*vr.waterPerReward), ' uL of water']); 
 fclose('all'); % close save files
 
