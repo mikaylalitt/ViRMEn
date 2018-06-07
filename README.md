@@ -10,7 +10,7 @@ Make sure that you have the necessary software on your machine. See "Prerequisit
 * [MATLAB](https://www.mathworks.com/products/matlab.html) - Needed to run ViRMEn
 * [ViRMEn](https://pni.princeton.edu/pni-software-tools/virmen) - Installation instructions for ViRMEn here
 
--- Note: The version of MATLAB that this code was run on is:
+-- Note: The version of MATLAB that this code was run on is: R2011b
 
 ### Running ViRMEn
 
@@ -18,7 +18,11 @@ Open MATLAB. Make sure that the directory and subdirectories containing the down
 
 ## Experiments
 
-There is code for two complete experiments in this repository. 
+There is code for two complete experiments in this repository. To deliver an initial reward (prior to running the experiment), run the following command in MATLAB:
+
+```
+calibrateWaterReward(18,5,5,0)
+```
 
 ### Linear track:
 
