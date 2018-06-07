@@ -93,9 +93,23 @@ vr = initializeDAQ_Training(vr);
 
 ## Common Errors and Fixes
 
+Error:
+
 **queueOutputData cannot be called while running unless IsContinuous is set to true.**
 
-Possible fixes include:
+Possible fixes to try:
+
+* Restart MATLAB, make sure that only one ViRMEn folder is added to the MATLAB path, and try running the experiment again.
+
+* In "reward.m", comment out the first and fourth line under "% deliver the reward:" so that the code looks like:
+
+```
+% deliver the reward:
+% for drop = 1:vr.dropsToSend
+    queueOutputData(vr.waterSession,[ones(1,vr.timeSolenoid)*vr.highVoltage vr.lowVoltage]');
+    startBackground(vr.waterSession);
+% end
+```
 
 ## Authors
 
