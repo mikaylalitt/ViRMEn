@@ -93,6 +93,10 @@ vr = initializeDAQ_Training(vr);
 
 ## Common Errors and Fixes
 
+**queueOutputData cannot be called while running unless IsContinuous is set to true.**
+
+Possible fixes include:
+
 ## Authors
 
 ## Acknowledgements
