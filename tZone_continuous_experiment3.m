@@ -147,11 +147,6 @@ end
 %     vr.hastestDoor = true;
 % end
 
-% % deliver reward for endzone task
-% if vr.rewardsOn && vr.hasReset
-%     vr = reward(vr);
-% end
-
 if vr.rewardsOn && vr.hasReset
     % check if the animal is in the left reward zone:
     if ((vr.position(1) < -(vr.arenaLength-vr.arenaWidth)) && (vr.position(2) > (vr.arenaLength-vr.arenaWidth)))
