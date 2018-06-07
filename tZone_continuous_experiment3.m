@@ -81,7 +81,7 @@ function vr = runtimeCodeFun(vr)
 % i.e. if the mouse has returned to start through return hall and gone back
 % through the main hall (it has gone back through the starting position)
 if (strcmp(vr.currHall,'main')... 
-        && (vr.position(2) > 12.5 && vr.position(2) < 15)... > 2 && vr.position(2) < 4)...
+        && (vr.position(2) > 12.5 && vr.position(2) < 15)...
         && (strcmp(vr.prevHall,'') || strcmp(vr.prevHall,'leftReturn') || strcmp(vr.prevHall,'rightReturn')))
     vr.hasReset = true;
 end
@@ -152,8 +152,8 @@ if vr.rewardsOn && vr.hasReset
         % make sure that it went through the main hall and top left hall to get there:
         if (vr.prevX_Posn > -23 && strcmp(vr.prevHall,'main'))
             % check if the animal alternated sides:
-            if vr.experimentV3 && sctrmp(vr.prevRewardSide, 'left')
-                disp('Did not alternate sides so no reward given');
+            if vr.experimentV3 && strcmp(vr.prevRewardSide, 'left')
+                disp('**Did not alternate sides so no reward given**');
             else  
                 % deliver reward
                 vr = reward(vr);
@@ -176,7 +176,7 @@ if vr.rewardsOn && vr.hasReset
     if ((vr.position(1) > 23) && (vr.position(2) > 23)) 
         if (vr.prevX_Posn < 23 && strcmp(vr.prevHall,'main'))
             if vr.experimentV3 && strcmp(vr.prevRewardSide, 'right')
-                disp('Did not alternate sides so no reward given');
+                disp('**Did not alternate sides so no reward given**');
             else
                 % deliver reward
                 vr = reward(vr);
