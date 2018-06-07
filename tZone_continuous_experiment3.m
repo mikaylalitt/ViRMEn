@@ -45,7 +45,6 @@ vr.hasReset = false; % if the mouse has used the return halls and gone back thro
 % it should start on 0 of the y-axis 
 vr.arenaLength = str2double(vr.exper.variables.arenaLength);
 vr.arenaWidth = str2double(vr.exper.variables.arenaWidth);
-vr.endZoneLength = str2double(vr.exper.variables.endZoneLength);
 
 % specifically for version 2:
 if vr.experimentV2
@@ -94,40 +93,30 @@ if (strcmp(vr.currHall,'main')...
 end
 
 % keep track of which hall the mouse is currently in and was in previously
-%if (vr.position(1) > -1 && vr.position(1) < 1)% checking to see if the mouse is in the main hall (via the width of the main hall)
-if (vr.position(1) > -(vr.arenaWidth/2) && vr.position(1) < (vr.arenaWidth/2))
-    %if (vr.prevX_Posn < -1 || vr.prevX_Posn > 1)
+if (vr.position(1) > -(vr.arenaWidth/2) && vr.position(1) < (vr.arenaWidth/2)) % checking to see if the mouse is in the main hall (via the width of the main hall)
     if (vr.prevX_Posn < -(vr.arenaWidth/2) || vr.prevX_Posn > (vr.arenaWidth/2))
         vr.prevHall = vr.currHall;
     end
     vr.currHall = 'main';
-% elseif (vr.position(1) < -1) 
 elseif (vr.position(1) < -(vr.arenaWidth/2))
-    %if (vr.position(2) > 23) % checking to see if the mouse is in left TZone hall
-    if (vr.position(2) > (vr.arenaLength-vr.arenaWidth))
-        %if (vr.prevX_Posn > -1 || vr.prevY_Posn < 23)
+    if (vr.position(2) > (vr.arenaLength-vr.arenaWidth))  % checking to see if the mouse is in left TZone hall
         if (vr.prevX_Posn > -(vr.arenaWidth/2) || vr.prevY_Posn < (vr.arenaLength-vr.arenaWidth))
             vr.prevHall = vr.currHall;
         end
         vr.currHall = 'leftTZone';
     else
-        %if (vr.prevX_Posn > -1 || vr.prevY_Posn > 23)
         if (vr.prevX_Posn > -(vr.arenaWidth/2) || vr.prevY_Posn > (vr.arenaLength-vr.arenaWidth))
             vr.prevHall = vr.currHall;
         end
         vr.currHall = 'leftReturn';
     end
-%elseif (vr.position(1) > 1) 
 elseif (vr.position(1) > (vr.arenaWidth/2))
-    %if (vr.position(2) > 23) % checking to see if the mouse is in right TZone hall
-    if (vr.position(2) > (vr.arenaLength-vr.arenaWidth))
-        %if (vr.prevX_Posn < 1 || vr.prevY_Posn < 23)
-        if (vr.prevX_Posn > (vr.arenaWidth/2) || vr.prevY_Posn < (vr.arenaLength-vr.arenaWidth))
+    if (vr.position(2) > (vr.arenaLength-vr.arenaWidth)) % checking to see if the mouse is in right TZone hall
+        if (vr.prevX_Posn < (vr.arenaWidth/2) || vr.prevY_Posn < (vr.arenaLength-vr.arenaWidth))
             vr.prevHall = vr.currHall;
         end
         vr.currHall = 'rightTZone';
     else
-        %if (vr.prevX_Posn < 1 || vr.prevY_Posn > 23)
         if (vr.prevX_Posn < (vr.arenaWidth/2) || vr.prevY_Posn > (vr.arenaLength-vr.arenaWidth))
             vr.prevHall = vr.currHall;
         end
@@ -165,10 +154,8 @@ end
 
 if vr.rewardsOn && vr.hasReset
     % check if the animal is in the left reward zone:
-    %if ((vr.position(1) < -23) && (vr.position(2) > 23)) 
     if ((vr.position(1) < -(vr.arenaLength-vr.arenaWidth)) && (vr.position(2) > (vr.arenaLength-vr.arenaWidth)))
         % make sure that it went through the main hall and top left hall to get there:
-        %if (vr.prevX_Posn > -23 && strcmp(vr.prevHall,'main'))
         if (vr.prevX_Posn > -(vr.arenaLength-vr.arenaWidth) && strcmp(vr.prevHall,'main'))
             % check if the animal alternated sides:
             if vr.experimentV3 && strcmp(vr.prevRewardSide, 'left')
@@ -192,9 +179,7 @@ if vr.rewardsOn && vr.hasReset
     end
     
     % check if the animal is in the right reward zone:
-    %if ((vr.position(1) > 23) && (vr.position(2) > 23)) 
     if ((vr.position(1) > (vr.arenaLength-vr.arenaWidth)) && (vr.position(2) > (vr.arenaLength-vr.arenaWidth)))
-        %if (vr.prevX_Posn < 23 && strcmp(vr.prevHall,'main'))
         if (vr.prevX_Posn < (vr.arenaLength-vr.arenaWidth) && strcmp(vr.prevHall,'main'))
             if vr.experimentV3 && strcmp(vr.prevRewardSide, 'right')
                 disp('**Did not alternate sides so no reward given**');
