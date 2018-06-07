@@ -1,6 +1,6 @@
 # ViRMEn
 
-This is a project containing code for creating mazes using Virtual Reality MATLAB Engine (ViRMEn). Included is code for a straight linear track and a T-Maze.
+This is a project containing code for creating experiments using Virtual Reality MATLAB Engine (ViRMEn). Included is code for a straight linear track and a T-Maze.
 
 ## Getting Started
 Make sure that you have the necessary software on your machine. See "Prerequisities" for more information.
@@ -14,21 +14,21 @@ Make sure that you have the necessary software on your machine. See "Prerequisit
 
 ### Running ViRMEn
 
-Open MATLAB. Make sure that the directory and subdirectories containing the downloaded ViRMEn zip has been added to the MATLAB path. To start ViRMEn, enter the command "virmen". 
+Open MATLAB. Make sure that the directory and subdirectories containing the downloaded ViRMEn zip has been added to the MATLAB path. To start ViRMEn, enter the command "virmen". A separate window should open with ViRMEn. To open a specific experiment from here, click on "Experiment" in the top left corner of the window, then "open" and select the experiment you would like to run.
 
-## Mazes
+## Experiments
 
-There is code for two complete mazes in this repository. 
+There is code for two complete experiments in this repository. 
 
 ### Linear track:
 
-The first maze is a straight linear track and is meant to train animals to run in virtual reality. For the code written, animals must alternate between each end of the track (called "endzones" in the code) in order to receive a reward. To run this maze, open the experiment:
+The first maze is a straight linear track. For the code written, animals must alternate between each end of the track (called "endzones" in the code) in order to receive a reward. To run this track, open the experiment:
 
 ```
 arena200cmEnriched_track_endZoneTask_v2
 ```
 
-Set the experiment so that it has the following settings:
+After the experiment has opened, set the "Experiment properties" to the following:
 
 
 Movement function:
@@ -45,6 +45,8 @@ Experiment code:
 training
 ```
 
+To run the experimment with these properties, click the running person in the top left corner.
+
 ### T-Maze:
 
 The second maze is a t-shaped maze. The endzones are at the tips of the T, and the animals must not only alternate endzones in order to receive a reward, they must also travel back through a return hallway and then the main hallway after receiving a reward to be eligible for another reward. To run this maze, open the experiment:
@@ -53,7 +55,7 @@ The second maze is a t-shaped maze. The endzones are at the tips of the T, and t
 arena_Tzone_continuous_v3
 ```
 
-Set the experiment so that it has the following settings:
+Set the "Experiment properties" to the following:
 
 
 Movement function:
@@ -69,6 +71,23 @@ Experiment code:
 ```
 tZone_continuous_experiment3
 ```
+
+## Testing
+Several notes about testing code:
+
+* To test an experiment, it is generally easier to use the keyboard for movement in the experiment. To do this, simply change the "Movement function" of the "Experiment properties" to 
+
+```
+moveWithKeyboard_builtin
+```
+
+* If you want to test an experiment on a computer that is not connected to the software that handles ball movement and delivering rewards, in the experiment code under "INITIALIZATION code" comment out the line that initializes the DAQ. For example, in the straight linear track experiment described above, you would comment out the following line in "training.m":
+
+```
+vr = initializeDAQ_Training(vr);
+```
+
+## Common Errors and Fixes
 
 ## Authors
 
