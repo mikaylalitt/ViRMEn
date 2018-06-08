@@ -111,6 +111,27 @@ Possible fixes to try:
 % end
 ```
 
+## Changing Experiment Dimensions
+If you want to change the dimensions of an experiment, make sure to update the following.
+
+In the "initializeDAQ..." file that is opened in the INITIALIZATION code for an experiment, update:
+
+```
+vr.xScaling
+vr.xOffset
+vr.yScaling
+vr.yOffset
+```
+so that they are correct for the new dimensions (see the lines of code in the file for more detail).
+
+
+If using the linear track and "alternateEndZoneReward.m", make sure that
+```
+vr.endZoneLoc1 = str2double(vr.exper.variables.arenaLength)-str2double(vr.exper.variables.endZoneLength);
+vr.endZoneLoc2 = str2double(vr.exper.variables.endZoneLength);
+```
+still accurately describes the new dimensions of the track.
+
 ## Authors
 
 ## Acknowledgements
